@@ -8,27 +8,60 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Person(Base):
-    __tablename__ = 'person'
+class Followers(Base):
+    __tablename__='followers'
+
+    id = Column(Integer, primary_key=True)
+    followers_id = Column(Integer)
+    following_id = Column(Integer)
+
+class User(Base):
+    __tablename__ = 'user'
     # Here we define columns for the table person
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+    user_name = Column(String(30), nullable=False)
+    password= Column(String(50), nullable=False)
+    firstname = Column(String(30), nullable=False)
+    lastname= Column(String(30), nullable=False)
+    register_date=Column(String(250), nullable=False)
+    email=Column(String(250), nullable=False,unique=True)
+    followers_id = Column(Integer, ForeignKey('Followers.followers_id'))
+    followers = relationship(Followers)
+    following_id = Column(Integer, ForeignKey('Followers.following_id'))
+    following = relationship(Followers)
 
-class Address(Base):
-    __tablename__ = 'address'
+
+class Publicaciones(Base):
+    __tablename__ = 'publicacion'
     # Here we define columns for the table address.
     # Notice that each column is also a normal Python instance attribute.
     id = Column(Integer, primary_key=True)
-    street_name = Column(String(250))
-    street_number = Column(String(250))
-    post_code = Column(String(250), nullable=False)
-    person_id = Column(Integer, ForeignKey('person.id'))
-    person = relationship(Person)
+    date = Column(String(250), nullable=False)
+    likes= Column(Integer)
+    post=  Column(String(250), nullable=False)
+    user_id = Column(Integer, ForeignKey('user.id'))
+    publicaciones = relationship(User)
 
-    def to_dict(self):
-        return {}
+class Compartir(Base):
+    __tablename__ = 'compartir'
+    
+    id = Column(Integer, primary_key=True)
+    date = Column(String(250), nullable=False)
+    url = Column(String(250), nullable=False)
+    media =  Column(String(250), nullable=False)
+    post_id = Column(Integer, ForeignKey('publicacion.id'))
+    compartir = relationship(Publicaciones)
 
+class Favoritos(Base):
+    __tablename__='favorito'
+
+    id = Column(Integer, primary_key=True)
+    post_id =  Column(Integer, ForeignKey('publicacion.id'))
+    favoritos = relationship(Publicaciones)
+
+
+   
 ## Draw from SQLAlchemy base
 try:
     result = render_er(Base, 'diagram.png')
