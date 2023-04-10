@@ -8,13 +8,7 @@ from eralchemy2 import render_er
 
 Base = declarative_base()
 
-class Followers(Base):
-    __tablename__='followers'
-
-    id = Column(Integer, primary_key=True)
-    followers_id = Column(Integer)
-    following_id = Column(Integer)
-
+    
 class User(Base):
     __tablename__ = 'user'
     # Here we define columns for the table person
@@ -26,11 +20,13 @@ class User(Base):
     lastname= Column(String(30), nullable=False)
     register_date=Column(String(250), nullable=False)
     email=Column(String(250), nullable=False,unique=True)
-    followers_id = Column(Integer, ForeignKey('Followers.followers_id'))
-    followers = relationship(Followers)
-    following_id = Column(Integer, ForeignKey('Followers.following_id'))
-    following = relationship(Followers)
 
+class Followers(Base):
+    __tablename__ = 'follower'
+    id = Column(Integer, primary_key=True)
+    followers = Column(Integer, ForeignKey('user.id'))
+    following = Column(Integer, ForeignKey('user.id'))
+    user = relationship(User)
 
 class Publicaciones(Base):
     __tablename__ = 'publicacion'
